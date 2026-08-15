@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Da Bancada à Clínica · Assistente de Translação de Terapia Gênica</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+:root{--dark:#0B2237;--teal:#065A82;--mint:#02A87E;--grey:#8595a3;--bg:#f4f7f9;--card:#fff;--red:#c0392b;--amber:#e08a1e;--line:#e3e9ee}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--dark);line-height:1.55}
+header{background:linear-gradient(120deg,var(--dark),var(--teal));color:#fff;padding:22px}
+header h1{font-size:22px;letter-spacing:.5px}
+header p{opacity:.92;font-size:12.5px;margin-top:6px;max-width:800px}
+.tag{display:inline-block;background:rgba(255,255,255,.15);padding:3px 10px;border-radius:20px;font-size:11px;margin-top:9px}
+.wrap{max-width:920px;margin:0 auto;padding:18px 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.drop{border:2px dashed #c3d0d8;border-radius:12px;padding:20px;text-align:center;color:var(--grey);font-size:13.5px;cursor:pointer;transition:.2s}
+.drop:hover,.drop.over{border-color:var(--mint);background:#f2faf7;color:var(--teal)}
+textarea{width:100%;min-height:90px;border:1px solid #cfd8dd;border-radius:10px;padding:11px;font-size:13.5px;font-family:inherit;resize:vertical;margin-top:10px}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:11px}
+button{border:none;border-radius:9px;padding:10px 16px;font-size:13.5px;font-weight:600;cursor:pointer}
+.primary{background:var(--mint);color:#fff}.ghost{background:#fff;border:1px solid #cfd8dd;color:var(--teal)}
+.small{font-size:11.5px;color:var(--grey)}
+input[type=password],select{padding:9px;border:1px solid #cfd8dd;border-radius:8px;font-size:13px}
+#thread{display:none}
+.msg{margin:12px 0;display:flex;gap:10px}
+.msg .av{width:30px;height:30px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+.msg.ai .av{background:var(--teal)}.msg.user .av{background:var(--mint)}
+.bubble{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.7px;flex:1}
+.msg.user .bubble{background:#f0faf6;border-color:#cfeee2}
+.bubble h2{font-size:12.5px;color:var(--teal);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.bubble h2:first-child{margin-top:0}
+.bubble p{margin:6px 0}.bubble ul{margin:5px 0 5px 2px;list-style:none}
+.bubble li{margin:7px 0;padding-left:22px;position:relative}
+.bubble li:before{content:"→";position:absolute;left:2px;color:var(--teal);font-weight:700}
+.bubble .q li:before{content:"?";color:var(--amber);font-weight:800}
+.bubble .rec li:before{content:"◆";color:var(--mint)}
+.badge{display:inline-block;font-size:10px;font-weight:700;color:#fff;border-radius:5px;padding:1px 6px;margin-left:3px}
+.b-hi{background:var(--red)}.b-md{background:var(--amber)}.b-lo{background:var(--grey)}
+.replybar{display:none;gap:9px;margin-top:8px}
+.replybar textarea{min-height:52px;margin-top:0}
+.spinner{display:inline-block;width:15px;height:15px;border:2px solid #cfd8dd;border-top-color:var(--teal);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.keybox{background:#fbfcfd;border:1px dashed #cfd8dd;border-radius:10px;padding:11px;margin-top:11px}
+details{margin-top:8px}summary{cursor:pointer;font-size:12px;color:var(--teal);font-weight:600}
+.evbar{background:#eef5f3;border-radius:8px;padding:10px;font-size:11.5px;margin-top:8px}
+footer{font-size:11px;color:var(--grey);text-align:center;padding:12px}
+
+/* ---- capa publica (adicionada na publicacao; puramente aditiva) ---- */
+.capa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.capa .lede{font-size:13.5px;line-height:1.6}
+.capa h2{font-size:13px;letter-spacing:.3px;text-transform:uppercase;color:var(--teal);margin:16px 0 8px}
+.casos{list-style:none;display:grid;gap:8px}
+.casos li{border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:8px;padding:9px 11px;background:#fbfcfd}
+.casos li.recusa{border-left-color:var(--amber);background:#fffaf2}
+.casos a{color:var(--dark);font-weight:600;font-size:13px;text-decoration:none}
+.casos a:hover{text-decoration:underline}
+.casos p{font-size:12px;color:#54606b;margin-top:3px;line-height:1.5}
+.casos .selo{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.4px;color:#fff;background:var(--amber);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.ressalva{border:1px solid #f0d9b5;background:#fffaf2;border-left:4px solid var(--amber);border-radius:8px;padding:12px 14px;margin-top:16px}
+.ressalva b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:#9a6410;margin-bottom:5px}
+.ressalva ul{margin:0;padding-left:18px}
+.ressalva li{font-size:12.5px;line-height:1.6;color:#54606b}
+@media(max-width:640px){.capa{padding:14px}}
+</style></head>
+<body>
+<header>
+  <h1>Da Bancada à Clínica · Assistente de Translação de Terapia Gênica</h1>
+  <p>Envie o seu projeto (Word). Uma IA ancorada num modelo de 362 programas de desenvolvimento de terapia gênica avalia sua trajetória <b>olhando pra frente</b>, faz as perguntas que faltam, e — conforme você responde — vai construindo com você um plano para aumentar a chance de chegar ao paciente.</p>
+  <span class="tag">Protótipo · Prêmio Jovem Cientista 2026 · IA para o Bem Comum · Saúde</span>
+</header>
+<div class="wrap">
+
+  <div class="capa">
+    <p class="lede">Instrumento gratuito que estima a <b>posição relativa</b> do desenho de um estudo
+      pré-clínico de terapia gênica frente a um acervo de <b>362 programas</b>, e devolve
+      recomendações acionáveis.</p>
+
+    <h2>Quatro análises de exemplo</h2>
+    <ul class="casos">
+      <li>
+        <a href="casos/fapesp-osteoartrite.html">Osteoartrite &middot; condrócitos IL-4/TGF-&beta;1, modelo ovino (Auxílio FAPESP)</a>
+        <p>Projeto em planejamento que acerta as decisões de maior peso no acervo: alta prontidão relativa, percentil ~72.</p>
+      </li>
+      <li>
+        <a href="casos/demambro-laceracao.html">Laceração muscular &middot; circuito lentiviral autorregulado NF-&kappa;B &rarr; sTGF&beta;RII-Fc</a>
+        <p>Condição não monogênica: a ferramenta entrega a leitura, mas declara confiança reduzida no estrato.</p>
+      </li>
+      <li>
+        <a href="casos/bartolomeo-dap.html">Doença arterial periférica &middot; minicírculos + CRISPR-Cas13d anti-PHD2</a>
+        <p>Prova de conceito ainda puramente in vitro: prontidão baixa no desenho atual, com o caminho para elevá-la.</p>
+      </li>
+      <li class="recusa">
+        <a href="casos/mir146b-atc-recusado.html">Câncer anaplásico de tireoide &middot; CRISPR/Cas9n anti-miR-146b</a>
+        <span class="selo">RECUSADO</span>
+        <p>Fora do domínio de validade por três motivos independentes. A ferramenta <b>se recusa a pontuar</b>
+          e explica o porquê, em vez de inventar um número &mdash; o comportamento que a distingue de um classificador qualquer.</p>
+      </li>
+    </ul>
+
+    <div class="ressalva">
+      <b>Como ler o resultado</b>
+      <ul>
+        <li>A saída é <b>posição relativa dentro de um escopo declarado</b>, não probabilidade de sucesso.
+          A base é caso-controle pareada por doença e não estima chance absoluta de transladação.</li>
+        <li>O instrumento é de <b>orientação, não de decisão</b>: as recomendações são o produto principal, o percentil é contexto.</li>
+        <li>Não substitui avaliação regulatória, parecer de comitê de ética nem julgamento científico de especialista.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" id="intake">
+    <div class="drop" id="drop" onclick="document.getElementById('file').click()">
+      📄 <b>Solte seu projeto aqui</b> ou clique para enviar um arquivo <b>.docx</b><br>
+      <span class="small">o texto é lido no seu navegador; nada é armazenado</span>
+    </div>
+    <input type="file" id="file" accept=".docx" style="display:none" onchange="onFile(event)">
+    <textarea id="inp" placeholder="...ou cole aqui a descrição do seu projeto: doença, gene/mecanismo, vetor, e a trajetória de validação que pretende seguir."></textarea>
+    <div class="row">
+      <button class="primary" onclick="start()">Avaliar meu projeto</button>
+      <button class="ghost" onclick="playDemo(1)">Exemplo 1 · OA in vivo (lentivírus)</button>
+      <button class="ghost" onclick="playDemo(2)">Exemplo 2 · OA ex vivo alogênico (banco de células)</button>
+      <span class="small" id="status"></span>
+    </div>
+    <div class="keybox">
+      <div class="small" style="margin-bottom:6px"><b>Modo ao vivo</b> (avaliar o seu projeto de verdade): cole uma chave de API — fica só na memória do navegador.</div>
+      <div class="row" style="margin-top:0">
+        <select id="prov"><option value="anthropic">Anthropic (Claude)</option><option value="openai">OpenAI (GPT)</option></select>
+        <input type="password" id="key" placeholder="sk-..." style="flex:1;min-width:170px">
+      </div>
+    </div>
+    <details><summary>Como a IA decide (transparência)</summary>
+      <div class="evbar">Ancorada nos achados do modelo: material representativo do produto (fator dominante, OR ~25), confirmação em animal de grande porte (2º portão: 66% vs 12%), fabricação escalável (OR ~6,5), via clinicamente viável (OR ~5,6), plataforma de vetor validada (AAV 60% / lentivírus 56% vs não-viral 18%), controle adequado, dose-resposta, imunogenicidade/biodistribuição, seguimento longo, autor clínico (OR ~2,6), financiamento translacional (OR ~2,7). Princípio: mesma linhagem + mesmo alvo; trocar a ferramenta é normal, mas testar o construto final na etapa pivotal é o que mais conta.</div>
+    </details>
+  </div>
+
+  <div class="card" id="thread">
+    <div id="msgs"></div>
+    <div class="replybar" id="replybar">
+      <textarea id="reply" placeholder="Responda às perguntas da IA aqui..."></textarea>
+      <button class="primary" onclick="sendReply()" style="align-self:flex-end">Enviar</button>
+    </div>
+    <div class="small" id="tstatus" style="margin-top:6px"></div>
+    <button class="ghost" onclick="location.reload()" style="margin-top:10px">Novo projeto</button>
+  </div>
+</div>
+<footer>Da Bancada à Clínica — apoio à decisão para pesquisa. Não substitui avaliação regulatória. Fonte: modelo caso-controle de terapia gênica, 362 programas, AUROC 0,816 (2026). A saída é percentil dentro do acervo, não probabilidade de sucesso.</footer>
+
+<script>
+const SYS=`Você é o assistente Da Bancada à Clínica, um mentor de translação de terapia gênica para pesquisadores da bancada (Brasil). O usuário envia um PROJETO de terapia gênica pré-clínica (ou sua descrição). Você conduz uma CONVERSA de mentoria, olhando PARA FRENTE — nunca um checklist retrospectivo. O pesquisador está no começo; avalie o PLANO e faça as perguntas certas; conforme ele responde, refine a orientação e construa um plano de ação.
+
+BASE DE EVIDÊNCIA (modelo caso-controle de 362 programas, caso-controle pareado por doença, validação cruzada aninhada, AUROC 0,816 (IC95% 0,775-0,856); 0,843 nos programas de rótulo não contestado; ancore-se nela, NÃO invente números):
+- Material representativo do produto clínico: MAIOR preditor (OR ~25). Testar na etapa pivotal o construto/processo que iria ao paciente.
+- Animal de GRANDE PORTE (cão/porco/primata): 2º portão (66% dos que translacionaram vs 12%).
+- Fabricação escalável/grau clínico (OR ~6,5). Via clinicamente viável (OR ~5,6; intra-articular/IV triviais, intracerebral/intratecal não).
+- Plataforma de vetor: dos que translacionaram, 60% AAV, 56% lentivírus, 50% retrovírus, 30% edição, 28% adenovírus, 18% não-viral.
+- Controle adequado, dose-resposta, efeito grande/padronizado, imunogenicidade, biodistribuição, seguimento de segurança longo.
+- Autor clínico no time (OR ~2,6); financiamento translacional (OR ~2,7).
+- LINHAGEM: "translacionou" = mesma linhagem (grupo/spin-out/licenciado) leva o MESMO alvo à clínica; trocar a ferramenta (até classe de vetor) é normal, mas o preditor dominante é testar o construto final na etapa pivotal.
+- PORTÃO, não gradiente: mérito pré-clínico decide a ENTRADA na clínica.
+
+REGRAS: foque no MODIFICÁVEL; perguntas de PLANEJAMENTO ("você já pensou em...?"), não de auditoria; seja específico à doença/vetor; reconheça o que o plano já tem de bom; honesto e conciso; nunca invente ensaios/produtos.
+
+FLUXO:
+- Na PRIMEIRA resposta (após receber o projeto): dê a avaliação estruturada e TERMINE pedindo as 3-4 perguntas de planejamento mais importantes.
+- Nas respostas SEGUINTES (após o usuário responder): incorpore o que ele disse, atualize a orientação, dê recomendações concretas e, se fizer sentido, faça 1-2 perguntas de aprofundamento. Vá convergindo para um plano de ação priorizado.
+
+FORMATO (cabeçalhos "## " e listas "- "; **negrito**; força entre colchetes ex.: [fator dominante],[2º portão],[alto],[médio],[favorável]):
+Na 1ª resposta use: ## Intenção e contexto / ## Análise da sua trajetória / ## Pontos críticos / ## Perguntas que preciso que você responda
+Nas seguintes use os cabeçalhos que fizerem sentido, ex.: ## O que muda com sua resposta / ## Recomendações priorizadas / ## Próxima pergunta`;
+
+let MSGS=[]; // {role, content}
+const msgsEl=document.getElementById('msgs');
+
+function render(md){
+  const lines=md.split('\n'); let html='',inUl=false,cls='';
+  const close=()=>{if(inUl){html+='</ul>';inUl=false;}};
+  for(let ln of lines){ln=ln.trim(); if(!ln)continue;
+    ln=ln.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+    ln=ln.replace(/\[(fator dominante|2º portão|2o portão|alto)\]/gi,'<span class="badge b-hi">$1</span>');
+    ln=ln.replace(/\[(médio|medio|favorável|favoravel)\]/gi,'<span class="badge b-md">$1</span>');
+    ln=ln.replace(/\[(.+?)\]/g,'<span class="badge b-lo">$1</span>');
+    if(ln.startsWith('## ')){close();const t=ln.slice(3);cls=/pergunta/i.test(t)?'q':/recomenda/i.test(t)?'rec':'';html+='<h2>'+t+'</h2>';}
+    else if(ln.startsWith('- ')){if(!inUl){html+='<ul class="'+cls+'">';inUl=true;}html+='<li>'+ln.slice(2)+'</li>';}
+    else{close();html+='<p>'+ln+'</p>';}}
+  close();return html;
+}
+function bubble(role,md,raw){
+  const d=document.createElement('div');d.className='msg '+(role==='ai'?'ai':'user');
+  d.innerHTML=`<div class="av">${role==='ai'?'IA':'você'}</div><div class="bubble">${raw?('<p>'+md.replace(/</g,'&lt;')+'</p>'):render(md)}</div>`;
+  msgsEl.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function goThread(){document.getElementById('intake').style.display='none';document.getElementById('thread').style.display='block';}
+
+// ---------- file ----------
+function onFile(e){const f=e.target.files[0];if(!f)return;
+  const st=document.getElementById('status');st.innerHTML='<span class="spinner"></span> lendo o Word...';
+  const r=new FileReader();
+  r.onload=async ev=>{try{const res=await mammoth.extractRawText({arrayBuffer:ev.target.result});
+    document.getElementById('inp').value=res.value.trim();st.textContent='projeto carregado ('+res.value.trim().length+' caracteres) — clique em Avaliar';}
+    catch(err){st.textContent='não consegui ler o .docx; cole o texto manualmente';}};
+  r.readAsArrayBuffer(f);
+}
+const drop=document.getElementById('drop');
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f){document.getElementById('file').files=e.dataTransfer.files;onFile({target:{files:[f]}});}});
+
+// ---------- live ----------
+async function callLLM(){
+  const key=document.getElementById('key').value.trim(),prov=document.getElementById('prov').value;
+  if(prov==='anthropic'){
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-3-5-sonnet-latest',max_tokens:1600,system:SYS,messages:MSGS})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message);return d.content[0].text;
+  }else{
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',
+      headers:{'content-type':'application/json','authorization':'Bearer '+key},
+      body:JSON.stringify({model:'gpt-4o',max_tokens:1600,messages:[{role:'system',content:SYS},...MSGS]})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message);return d.choices[0].message.content;
+  }
+}
+async function start(){
+  const txt=document.getElementById('inp').value.trim();const st=document.getElementById('status');
+  if(!txt){st.textContent='envie um Word ou cole o projeto';return;}
+  if(!document.getElementById('key').value.trim()){st.innerHTML='cole uma chave para o modo ao vivo — ou use a conversa-exemplo';return;}
+  goThread();bubble('user','Projeto enviado:\n'+txt.slice(0,600)+(txt.length>600?'…':''),true);
+  MSGS.push({role:'user',content:'Aqui está meu projeto de terapia gênica:\n\n'+txt});
+  await turn();
+  document.getElementById('replybar').style.display='flex';
+}
+async function sendReply(){
+  const t=document.getElementById('reply').value.trim();if(!t)return;
+  document.getElementById('reply').value='';bubble('user',t,true);MSGS.push({role:'user',content:t});await turn();
+}
+async function turn(){
+  const ts=document.getElementById('tstatus');ts.innerHTML='<span class="spinner"></span> pensando...';
+  try{const out=await callLLM();MSGS.push({role:'assistant',content:out});bubble('ai',out);ts.textContent='';}
+  catch(e){ts.innerHTML='<span style="color:#c0392b">falhou: '+e.message+'</span>';}
+}
+
+// ---------- demo (scripted, no key) ----------
+const DEMO1=[
+ {role:'user',raw:true,text:'Projeto enviado: Terapia gênica para osteoartrite superexpressando IL-4 e TGF-β via lentivírus. Plano: in vitro → camundongo → porco (lentivírus, foco em eficácia). Depois, trocar para vetor mais seguro para transdução ex vivo e translacionar.'},
+ {role:'ai',text:`## Intenção e contexto
+Intenção reconhecida: imunomodulação e reparo de matriz (IL-4 + TGF-β) na osteoartrite — doença multifatorial tratável por **adição gênica**, dentro do escopo do modelo. A via **intra-articular é clinicamente viável e já usada** em terapia gênica de OA, então seu risco de via é baixo. [favorável]
+## Análise da sua trajetória
+Dois acertos importantes: você mira uma via translacionável e planeja **animal de grande porte (porco)** — o 2º maior sinal de translação. O risco central está na sequência: você valida a eficácia com lentivírus e só troca para o vetor final depois. Trocar a ferramenta é legítimo, mas o fator que mais separa quem translaciona é ter testado o **construto final** na etapa pivotal.
+## Pontos críticos
+- **Representatividade do produto:** se o porco for com lentivírus e o vetor final entrar só depois, você perde o fator mais forte do modelo. [fator dominante]
+- **Portão do grande porte:** ir a porco te coloca no lado certo (66% vs 12%) — amarre ao ponto acima. [2º portão]
+- **Escalabilidade da fabricação:** terapia ex vivo lentiviral tem gargalo de escala; decidir a plataforma final cedo muda tudo. [alto]
+- **Segurança adiada:** IL-4/TGF-β superfisiológicos têm risco imune/fibrótico — vale avaliar cedo. [médio]
+## Perguntas que preciso que você responda
+- Qual é o construto FINAL que fica no paciente — e você o testará no porco, ou o porco será com o lentivírus?
+- A fabricação do seu vetor ex vivo final é escalável a grau clínico? Já pensou nisso?
+- Qual desfecho clínico de OA você miraria: dor (WOMAC), função, ou estrutura da cartilagem?`},
+ {role:'user',raw:true,text:'Sinceramente pensei em fazer o porco com o lentivírus mesmo, porque é mais fácil, e trocar depois. Ainda não pensei na fabricação. E eu miraria dor, tipo WOMAC.'},
+ {role:'ai',text:`## O que muda com sua resposta
+Entendido — e é aqui que está sua maior oportunidade de ganho. Fazer o porco com o lentivírus "porque é mais fácil" é comum, mas significa que sua **etapa pivotal (grande porte) não testa o produto que irá ao paciente** — justamente o fator nº 1 do modelo. Não é que o porco-lentivírus não valha; ele prova o conceito biológico. Mas se der para **antecipar a decisão do vetor final** e rodar o porco já com ele (ou pelo menos um braço com o vetor final), você converte seu 2º portão em evidência translacional de verdade. [fator dominante]
+## Recomendações priorizadas
+- Decida o vetor final ANTES do porco, e inclua um braço do estudo em grande porte com esse construto — mesmo que menor.
+- Comece agora um levantamento de **fabricação escalável** do candidato ex vivo: isso pode até mudar sua escolha de vetor (alguns são muito mais fáceis de escalar em grau clínico).
+- Para o desfecho: dor (WOMAC) é válido clinicamente, mas reguladores de OA valorizam **estrutura** (cartilagem por imagem) como desfecho modificador de doença. Meça também um marcador estrutural no pré-clínico para construir essa ponte.
+## Próxima pergunta
+Você tem um ortopedista ou centro clínico de OA com quem possa desenhar o desfecho e a população desde já? Isso, no modelo, é um preditor real de translação (OR ~2,6).`},
+ {role:'user',raw:true,text:'Não tenho ortopedista no time ainda. Como acho um e o que peço pra ele?'},
+ {role:'ai',text:`## Recomendações priorizadas
+- Procure um **ortopedista/reumatologista de centro acadêmico** com linha em OA de joelho (serviços de cirurgia do joelho e ambulatórios de OA são bons pontos de partida). Traga-o como colaborador, não só consultor.
+- No primeiro contato, peça três coisas concretas: (1) qual **desfecho clínico** ele consideraria convincente (dor, função, estrutura); (2) qual **população** faria sentido (estágio da OA, idade); (3) que **segurança** ele exigiria antes de topar uma primeira aplicação intra-articular.
+- Leve seu plano pré-clínico e pergunte "o que faltaria aqui para você levar isso a um paciente?" — a resposta dele vira seu checklist translacional.
+## O plano até aqui
+Você já tem: via favorável + grande porte planejado. Suas 3 alavancas de maior retorno agora são, em ordem: **(1) testar o vetor final no grande porte**, **(2) resolver a fabricação escalável cedo**, **(3) trazer o clínico e medir um desfecho estrutural**. Se avançar nesses três, você sai de um bom projeto de eficácia para um projeto com trajetória translacional real.`}
+];
+const DEMO2=[
+ {role:'user',raw:true,text:'Projeto enviado: Osteoartrite tratada por terapia gênica EX VIVO. Em vez de vírus in vivo, modifico células (IL-4/TGF-β) e crio um banco de células padronizado ALOGÊNICO (não autólogo). Ideia: vender over-the-counter, em vials de células prontas.'},
+ {role:'ai',text:`## Intenção e contexto
+Reconheço: um **produto celular alogênico "de prateleira"** geneticamente modificado para OA — mesmo alvo (IL-4/TGF-β), agora entregue por células. Há precedente clínico direto desse paradigma em OA (condrócitos alogênicos modificados para TGF-β chegaram à Fase III), então a abordagem **translaciona**. [favorável]
+## Análise da sua trajetória
+Duas forças grandes de saída: (1) um banco padronizado alogênico **embute fabricação escalável** — um banco → muitas doses, sem a logística por-paciente do autólogo, e isso é um dos maiores preditores do modelo; (2) por construir o **produto real** (lote celular definido e caracterizado) desde cedo, você já testa material representativo — o fator nº 1. Seu risco central migra do "vetor" para a **célula alogênica** e para a **regulação**.
+## Pontos críticos
+- **Fabricação escalável embutida:** a maior vantagem do alogênico de prateleira. [alto]
+- **Produto representativo por design:** o lote do banco pode SER o material clínico testado. [fator dominante]
+- **Imunogenicidade do alogênico:** seu maior risco — células não-autólogas podem ser rejeitadas ou gerar resposta imune. A favor: a articulação é relativamente imunoprivilegiada e a via intra-articular é clinicamente viável. [médio]
+- **Realidade regulatória do "OTC":** um produto celular geneticamente modificado é um **medicamento de terapia avançada (ATMP)** — exige ensaio clínico e aprovação (ANVISA/FDA/EMA). "Over-the-counter/sem receita" não é viável; o real e valioso é o modelo **de prateleira, pronto-uso, sob prescrição**. [alerta]
+## Perguntas que preciso que você responda
+- Qual vetor usará para modificar as células ex vivo (lentivírus/retrovírus)? É uma plataforma já validada clinicamente?
+- Como garantirá **identidade, potência e consistência** do banco entre lotes? (a caracterização do banco é crítica — houve um caso célebre de produto de OA retirado por erro de identidade da linhagem celular)
+- Qual sua estratégia para a **imunogenicidade alogênica**: matching, células imuno-evasivas, ou confiar no imunoprivilégio da articulação?`},
+ {role:'user',raw:true,text:'Pensei em lentivírus pra modificar. Sobre imunidade, ia confiar na articulação mesmo. E eu não sabia dessa parte de ATMP / que não pode ser OTC.'},
+ {role:'ai',text:`## O que muda com sua resposta
+Lentivírus para modificação ex vivo é uma **plataforma clínica consolidada** (56% de translação no modelo) — ferramenta bem escolhida. [favorável] Sobre imunidade: o imunoprivilégio articular ajuda, mas sozinho é uma aposta, não uma garantia. E entender que é ATMP (não OTC) muda seu planejamento: o valor do seu modelo de prateleira é **logística e custo** (um banco serve muitos pacientes), não driblar a regulação — e essa é uma proposta forte por si só, inclusive para o SUS.
+## Recomendações priorizadas
+- Trate o **banco celular como o produto**: defina cedo os critérios de identidade/potência/estabilidade do lote e um **ensaio de potência funcional** (o modelo valoriza isso e conecta o banco a um efeito).
+- Não confie só no imunoprivilégio: inclua no pré-clínico uma **avaliação de resposta imune** ao produto alogênico (é preditor de translação) e tenha um plano B (matching ou linhagem hipoimune).
+- Reposicione o discurso: "produto celular alogênico **de prateleira, pronto-uso, aplicado por médico**" — mantém a força logística sem o problema regulatório do "OTC".
+## Próxima pergunta
+Você planeja um ensaio de potência que preveja o efeito clínico por lote (ex.: secreção de IL-4/TGF-β + efeito condroprotetor mensurável)? É isso que amarra seu banco a um desfecho e fortalece a ponte translacional.`}
+];
+async function playDemo(which){
+  const DEMO = which===2 ? DEMO2 : DEMO1;
+  goThread();
+  for(const m of DEMO){
+    bubble(m.role,m.text,m.raw);
+    await new Promise(r=>setTimeout(r,700));
+  }
+  document.getElementById('tstatus').innerHTML='<i>fim da conversa-exemplo. No modo ao vivo, você continuaria respondendo e a IA seguiria te guiando.</i>';
+}
+</script>
+</body></html>
